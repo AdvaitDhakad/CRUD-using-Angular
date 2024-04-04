@@ -1,14 +1,14 @@
 {
   "posts": [
     {
-      "id": 1,
+      "id": "1",
       "title": "json-server",
       "author": "typicode"
     }
   ],
   "comments": [
     {
-      "id": 1,
+      "id": "1",
       "body": "some comment",
       "postId": 1
     }
@@ -16,18 +16,5 @@
   "profile": {
     "name": "typicode"
   },
-  "employees": [
-    {
-      "firstName": "k ",
-      "lastName": "kjbj",
-      "email": "kjnj",
-      "dob": "2024-03-10T18:30:00.000Z",
-      "gender": "Male",
-      "education": "Diploma",
-      "company": "jb",
-      "exp": 55,
-      "package": 555555,
-      "id": 1
-    }
-  ]
+  "employees": []
 }

@@ -1,43 +1,74 @@
-import { Component } from "@angular/core";
-import { FormBuilder, FormGroup } from "@angular/forms";
-import { EmployeeService } from "../services/employee.service";
-import { Dialog, DialogRef } from "@angular/cdk/dialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { CoreService } from '../core/core.service';
+import { EmployeeService } from '../services/employee.service';
+
 @Component({
-  selector: "app-emp-add-edit",
-  templateUrl: "./emp-add-edit.component.html",
-  styleUrl: "./emp-add-edit.component.scss",
+  selector: 'app-emp-add-edit',
+  templateUrl: './emp-add-edit.component.html',
+  styleUrls: ['./emp-add-edit.component.scss'],
 })
-export class EmpAddEditComponent {
+export class EmpAddEditComponent implements OnInit {
   empForm: FormGroup;
-  education: string[] = ["Matric", "Diploma", "Graduate", "Post Graduate"];
+
+  education: string[] = [
+    'Matric',
+    'Diploma',
+    'Intermediate',
+    'Graduate',
+    'Post Graduate',
+  ];
 
   constructor(
     private _fb: FormBuilder,
-    private empService: EmployeeService,
-    private dialogRef: DialogRef<EmpAddEditComponent>
+    private _empService: EmployeeService,
+    private _dialogRef: MatDialogRef<EmpAddEditComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private _coreService: CoreService
   ) {
     this.empForm = this._fb.group({
-      firstName: "",
-      lastName: "",
-      email: "",
-      dob: "",
-      gender: "",
-      education: "",
-      company: "",
-      exp: "",
-      package: "",
+      firstName: '',
+      lastName: '',
+      email: '',
+      dob: '',
+      gender: '',
+      education: '',
+      company: '',
+      experience: '',
+      package: '',
     });
   }
+
+  ngOnInit(): void {
+    this.empForm.patchValue(this.data);
+  }
+
   onFormSubmit() {
     if (this.empForm.valid) {
-      this.empService.addEmployee(this.empForm.value).subscribe({
-        next: (res: any) => {
-          alert("Employee added successfully");
-          this.dialogRef.close();
-        },
-      });
-    } else {
-      console.log("Please fill all the fields");
+      if (this.data) {
+        this._empService
+          .updateEmployee(this.data.id, this.empForm.value)
+          .subscribe({
+            next: (val: any) => {
+              this._coreService.openSnackBar('Employee detail updated!');
+              this._dialogRef.close(true);
+            },
+            error: (err: any) => {
+              console.error(err);
+            },
+          });
+      } else {
+        this._empService.addEmployee(this.empForm.value).subscribe({
+          next: (val: any) => {
+            this._coreService.openSnackBar('Employee added successfully');
+            this._dialogRef.close(true);
+          },
+          error: (err: any) => {
+            console.error(err);
+          },
+        });
+      }
     }
   }
 }
